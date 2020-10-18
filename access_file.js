@@ -18,14 +18,13 @@ export default function AccessFile(_filename) {
 					if (this.readyState == 4) {
 						if(this.status == 200) {
 							file_object.contents = this.responseText;
-							console.log(file_object.contents);
 						}
 						if(this.status == 404) {
 							file_object.contents = "404: File not found";
 						}
 					}
 				}
-				request.open("GET", this.filename, true);
+				request.open("GET", this.filename + "&time=" + Date.now(), true);
 				request.send();
 			}
 			return this.contents;

@@ -5,6 +5,7 @@ export var main_canvas;
 export var temp_canvas;
 export var main_context;
 export var temp_context;
+export var fps;
 
 export function LoadImage(_filename) {
 	var image_object = {
@@ -15,15 +16,33 @@ export function LoadImage(_filename) {
 		y: -1,
 		w: -1,
 		h: -1,
-		draw : function(_x, _y, _w, _h) {
-			this.x=_x;
-			this.y=_y;
-			this.w = this.image.naturalWidth;
-			this.h = this.image.naturalHeight;
-			if(typeof _w !== "undefined") this.w = _w;
-			if(typeof _h !== "undefined") this.h = _h;
+		sx: -1,
+		sy: -1,
+		sw: -1,
+		sh: -1,
+		//draw : function(_x, _y, _w, _h) {
+		draw : function(_sx, _sy, _sw, _sh, _dx, _dy, _dw, _dh) {
+			if(typeof _dx == "undefined") {//_sx, _sy, _sw, _sh,
+				this.x = _sx;
+				this.y = _sy;
+				this.w = this.image.naturalWidth;
+				this.h = this.image.naturalHeight;
+				if(typeof _sw !== "undefined") this.w = _sw;
+				if(typeof _sh !== "undefined") this.h = _sh;
+				this.context.drawImage(this.image, this.x, this.y, this.w, this.h);
+			}
+			else{
+				this.x = _dx;
+				this.y = _dy;
+				this.w = _dw;
+				this.h = _dh;
+				this.sx = _sx;
+				this.sy = _sy;
+				this.sw = _sw;
+				this.sh = _sh;
+				this.context.drawImage(this.image, this.sx, this.sy, this.sw, this.sh, this.x, this.y, this.w, this.h);
+			}
 
-			this.context.drawImage(this.image, this.x, this.y, this.w, this.h);
 		}
 	};
 	image_object.image.src = _filename;
@@ -85,7 +104,8 @@ export function get_width(){
 export function get_height(){
 	return main_canvas.height;
 }
-export function init(w, h){
+export function init(w, h, _fps){
+	fps = _fps;
 	main_canvas = document.getElementById('myCanvas');
 	main_canvas.width = w;
 	main_canvas.height = h;
