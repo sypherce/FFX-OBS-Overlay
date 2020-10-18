@@ -1,0 +1,217 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<head>
+</head>
+<style> 
+@font-face {
+  font-family: FinalFantasy;
+  src: url("RunicMTCondensed.ttf");
+}
+
+div {
+  font-family: FinalFantasy;
+}
+	canvas {
+		background-color: #00F;
+	}
+	body {
+		margin: 0px;
+		padding: 0px;
+	}
+</style>
+
+<script>
+	var canvas;
+	var temp_canvas;
+	var context;
+	var temp_context;
+		var background_image ;
+		var tidus_face;
+		var yuna_face; 
+		var auron_face;
+		var kimahri_face; 
+		var wakka_face; 
+		var lulu_face; 
+		var rikku_face;
+
+	function setup_all()
+	{
+		canvas = document.getElementById('myCanvas');
+		temp_canvas = document.getElementById('tempCanvas');
+		context = canvas.getContext('2d');
+		temp_context = temp_canvas.getContext('2d');
+		background_image = LoadImage("assets/background.png", context);
+		tidus_face = LoadImage("assets/tidus_face.png", context);
+		yuna_face = LoadImage("assets/yuna_face.png", context);
+		auron_face = LoadImage("assets/auron_face.png", context);
+		kimahri_face = LoadImage("assets/kimahri_face.png", context);
+		wakka_face = LoadImage("assets/wakka_face.png", context);
+		lulu_face = LoadImage("assets/lulu_face.png", context);
+		rikku_face = LoadImage("assets/rikku_face.png", context);
+		main_loop();
+	}
+
+	function LoadImage(_filename, _context)
+	{	
+		var image_object = {
+			image: new Image(),
+			filename: _filename,
+			context: _context,
+			x: -1,
+			y: -1,
+			w: -1,
+			h: -1,
+			draw : function(_x, _y, _w, _h) {
+				x=_x;
+				y=_y;
+				w = image_object.image.naturalWidth;
+				h = image_object.image.naturalHeight;
+				if(typeof _w !== "undefined") {w = _w;}
+				if(typeof _h !== "undefined") {h = _h;}
+
+				image_object.context.drawImage(image_object.image, x, y, w, h);
+			}
+		};
+
+		image_object.image.src = _filename;
+		image_object.image.onload = function() {
+			image_object.draw(image_object.x, image_object.y, image_object.w, image_object.h);
+		};
+		return image_object;
+	}
+	
+    function draw_text(text, font, fill, stroke, stroke_width, x, y) {
+
+        context.font = font;
+		if(stroke_width > 0.0)
+		{
+			context.fillStyle = stroke;
+			context.fillText(text, x + stroke_width, y+ stroke_width); 
+			context.fillText(text, x - stroke_width, y- stroke_width); 
+			context.fillText(text, x - stroke_width, y); 
+			context.fillText(text, x, y - stroke_width); 
+			context.fillText(text, x + stroke_width, y); 
+			context.fillText(text, x, y + stroke_width); 
+		}
+        context.fillStyle = fill;
+        context.fillText(text, x, y); 
+	}
+
+	function create_radial_gradient(x0, y0, x1, y1, c0, c1)
+	{
+		var grd = temp_context.createRadialGradient(x0, y0, 0, x1, y1, 100);
+		grd.addColorStop(0, c0);
+		grd.addColorStop(1, c1);
+		return grd;
+	}
+	function create_linear_gradient(x0, y0, x1, y1, c0, c1)
+	{
+
+		var grd = temp_context.createLinearGradient(x0, y0, x1, y1);
+		grd.addColorStop(0, c0);
+		grd.addColorStop(1, c1);
+		return grd;
+	}
+	function shear(ctx, x)
+	{
+		ctx.transform(1, 0, x, 1, 0, 0);//shear
+	}
+	function draw_rect(x, y, w, h, s, c)
+	{
+		shear(temp_context, s)
+		temp_context.translate(27*-s, 0);
+		temp_context.translate(w / 2, h / 2);
+		temp_context.fillStyle = c;
+		temp_context.fillRect(-w / 2, -h / 2, w, h);
+		context.drawImage(temp_canvas,x,y);
+		
+		temp_context.resetTransform();
+		temp_context.clearRect(0, 0, temp_canvas.width, temp_canvas.height);
+		context.resetTransform();
+	}
+	function draw_linear_gradient_rect(x, y, w, h, s, c0, c1)
+	{
+		draw_rect(x, y, w, h, s, create_linear_gradient(-w/2, -h/2, w/2, h/2, c0, c1));
+	}
+	function draw_radial_gradient_rect(x, y, w, h, s, c0, c1)
+	{
+		draw_rect(x, y, w, h, s, create_radial_gradient(0, 0, -w/2, -h/2, c0, c1));
+	}
+
+	function draw_faceplate(name, image, x, y, hp, mp, slvl)
+	{
+		var rectWidth = 143 - 15;
+		var rectHeight = 27;
+		var bgrectWidth = 196;
+		var bgrectHeight = 96;
+		var face_rect_width = 96;
+		var face_rect_height = 96;
+		var shadow = 4
+		var shear = -0.5
+		
+		y = y + 3
+		draw_radial_gradient_rect(x, y, face_rect_width, face_rect_height, 0, "#ffffff46", "#00000046");
+		image.draw(x, y);
+		draw_text(name, "normal 44px FinalFantasy", "black", "white", 1, x+10, y+52)
+	
+		x = x + face_rect_width
+		draw_linear_gradient_rect(x, y, bgrectWidth, bgrectHeight, 0, "#00000046", "#ffffff46");
+
+		x = x - 11
+		y = y + 13+2
+		draw_rect(x + shadow, y + shadow, rectWidth, rectHeight, shear, "#000000d9");
+		draw_linear_gradient_rect(x, y, rectWidth, rectHeight, shear, "#ff0100bd", "#ff9100bd");
+		draw_text("HP", "normal 44px FinalFantasy", "white", "black", 1, x+6, y+24)
+		draw_text(hp, "bold italic 36px Georgia", "white", "black", 1, x+75, y+20)
+
+		y = y + rectHeight + shadow + shadow+6
+		draw_rect(x + shadow, y + shadow, rectWidth, rectHeight, shear, "#000000d9");
+		draw_linear_gradient_rect(x, y, rectWidth, rectHeight, shear, "#23ff00bd", "#00ccffbd");
+		draw_text("MP", "normal 44px FinalFantasy", "white", "black", 1, x+6, y+24)
+		draw_text(mp, "bold italic 36px Georgia", "white", "black", 1, x+75, y+20)
+		
+		x = x + 160
+		y = y + 20
+		draw_text("SLV", "normal 18px FinalFantasy", "white", "black", 1, x-15, y+10)
+		draw_text(slvl, "bold italic 72px Georgia", "white", "black", 1, x-15, y+10)
+	}
+	
+	function draw_all()
+	{
+		//context.drawImage(background_image, 0, 0);
+		background_image.draw(0, 0, 1920, 1080);
+		x = 3
+		y = 123
+		seperator = 117
+		draw_faceplate("TIDUS",   tidus_face,   x, y, 200, 12, 3);
+		y = y + seperator
+		draw_faceplate("YUNA",    yuna_face,    x, y, 200, 12, 3);
+		y = y + seperator
+		draw_faceplate("AURON",   auron_face,   x, y, 1030, 33, 0);
+		y = y + seperator
+		draw_faceplate("KIMAHRI", kimahri_face, x, y, 535, 10, 1);
+		y = y + seperator
+		draw_faceplate("WAKKA",   wakka_face,   x, y, 618, 10, 3);
+		y = y + seperator +1
+		draw_faceplate("LULU",    lulu_face,    x, y, 200, 72, 4);
+		y = y + seperator
+		draw_faceplate("RIKKU",   rikku_face,   x, y, 360, 85, 0);
+	}
+	function main_loop()
+	{
+		//draw_all();
+		setInterval(draw_all, 100);
+	}
+
+</script>
+</head>
+<body onload="setup_all();">
+<canvas id="myCanvas" width="1920px" height="1080px" ></canvas>
+<canvas id="tempCanvas"></canvas>
+<!-- <br>
+<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)">ACCELERATE</button>
+<p>Use the ACCELERATE button to stay in the air</p>
+<p>How long can you stay alive?</p> -->
+</body>
+</html>      

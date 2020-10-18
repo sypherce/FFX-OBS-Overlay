@@ -1,0 +1,1 @@
+start "" /D C:\apps\speedrun\FFX "C:\Program Files\LOVE\love.exe" .
