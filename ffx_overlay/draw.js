@@ -114,12 +114,19 @@ export function get_width(){
 export function get_height(){
 	return main_canvas.height;
 }
-export function init(w, h, _fps){
+export function init(_width, _height, _fps){
 	fps = _fps;
-	main_canvas = document.getElementById('myCanvas');
-	main_canvas.width = w;
-	main_canvas.height = h;
+
+	main_canvas = document.createElement('canvas');
+	main_canvas.id = "myCanvas";
+	main_canvas.width = _width;
+	main_canvas.height = _height;
 	main_context = main_canvas.getContext('2d');
-	temp_canvas = document.getElementById('tempCanvas');
+
+	temp_canvas = document.createElement('canvas');
+	temp_canvas.id = "tempCanvas";
 	temp_context = temp_canvas.getContext('2d');
+
+	var body = document.getElementsByTagName("body")[0];
+	body.appendChild(main_canvas);
 }
