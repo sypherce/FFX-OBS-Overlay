@@ -1,6 +1,8 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en-us">
 <head>
+<meta charset="UTF-8">
+<title>FFX Overlay</title>
 <link rel="stylesheet" href="main.css">
 <script type="module" src="main.js?time=<?php echo time();?>"></script>
 </head>
